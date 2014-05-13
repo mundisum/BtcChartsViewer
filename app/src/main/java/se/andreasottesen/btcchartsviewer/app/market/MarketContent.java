@@ -17,6 +17,14 @@ public class MarketContent {
         ITEM_MAP.put(item.symbol, item);
     }
 
+    public static void addItems(List<MarketItem> items){
+        for (MarketItem item : items){
+            ITEMS.add(item);
+            ITEM_MAP.put(item.symbol, item);
+        }
+    }
+
+    /* For testing
     static{
         MarketItem item = new MarketItem();
         item.symbol = "marketSEK";
@@ -32,6 +40,7 @@ public class MarketContent {
 
         addItem(item);
     }
+    */
 
     public static class MarketItem{
         public String symbol;

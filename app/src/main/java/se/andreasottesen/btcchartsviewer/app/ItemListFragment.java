@@ -1,13 +1,21 @@
 package se.andreasottesen.btcchartsviewer.app;
 
 import android.app.Activity;
+import android.support.v4.content.AsyncTaskLoader;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
+import java.util.List;
+
+import retrofit.RestAdapter;
+import se.andreasottesen.btcchartsviewer.app.market.IMarketService;
 import se.andreasottesen.btcchartsviewer.app.market.MarketContent;
 
 /**
@@ -19,7 +27,10 @@ import se.andreasottesen.btcchartsviewer.app.market.MarketContent;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class ItemListFragment extends ListFragment {
+public class ItemListFragment extends ListFragment
+        implements LoaderManager.LoaderCallbacks<List<MarketContent.MarketItem>> {
+
+    public static String API_URL = "http://api.bitcoincharts.com";
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -68,23 +79,44 @@ public class ItemListFragment extends ListFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public Loader<List<MarketContent.MarketItem>> onCreateLoader(int id, Bundle args) {
+        return new JSONLoader(getActivity());
+    }
 
-        // TODO: replace with a real list adapter.
-        /*
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                DummyContent.ITEMS));
-                */
+    @Override
+    public void onLoadFinished(Loader<List<MarketContent.MarketItem>> listLoader, List<MarketContent.MarketItem> marketItems) {
+        MarketContent.addItems(marketItems);
+
         setListAdapter(new ArrayAdapter<MarketContent.MarketItem>(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
                 MarketContent.ITEMS
         ));
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<MarketContent.MarketItem>> listLoader) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setListAdapter(new ArrayAdapter<MarketContent.MarketItem>(
+                getActivity(),
+                android.R.layout.simple_list_item_activated_1,
+                android.R.id.text1,
+                MarketContent.ITEMS
+        ));
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        getLoaderManager().initLoader(0, null, this).forceLoad();
     }
 
     @Override
@@ -124,7 +156,6 @@ public class ItemListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        //mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
         mCallbacks.onItemSelected(MarketContent.ITEMS.get(position).symbol);
     }
 
@@ -157,5 +188,22 @@ public class ItemListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+    public static class JSONLoader extends AsyncTaskLoader<List<MarketContent.MarketItem>> {
+        public JSONLoader(Context context){
+            super(context);
+        }
+
+        @Override
+        public List<MarketContent.MarketItem> loadInBackground() {
+            RestAdapter restAdapter = new RestAdapter.Builder()
+                    .setEndpoint(API_URL)
+                    .build();
+            IMarketService service = restAdapter.create(IMarketService.class);
+            List<MarketContent.MarketItem> marketItems = service.marketItems();
+
+            return marketItems;
+        }
     }
 }
