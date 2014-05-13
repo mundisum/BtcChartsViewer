@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="C:\Users\andreas.ottesen\AndroidStudioProjects\BtcChartsViewer" />
-            <option value="C:\Users\andreas.ottesen\AndroidStudioProjects\BtcChartsViewer\app" />
+            <option value="C:\Users\Andreas\AndroidStudioProjects\BtcChartsViewer" />
+            <option value="C:\Users\Andreas\AndroidStudioProjects\BtcChartsViewer\app" />
           </set>
         </option>
       </GradleProjectSettings>

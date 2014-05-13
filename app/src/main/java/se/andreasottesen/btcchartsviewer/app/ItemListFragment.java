@@ -7,12 +7,18 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 
 import java.util.List;
+import java.util.zip.Inflater;
 
 import retrofit.RestAdapter;
 import se.andreasottesen.btcchartsviewer.app.market.IMarketService;
@@ -53,6 +59,9 @@ public class ItemListFragment extends ListFragment
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
+    /**
+     * The list adapter used
+     */
     private MarketListAdapter marketListAdapter;
 
     /**
@@ -94,42 +103,34 @@ public class ItemListFragment extends ListFragment
         MarketContent.addItems(marketItems);
 
         setListAdapter(marketListAdapter);
-        /*
-        setListAdapter(new ArrayAdapter<MarketContent.MarketItem>(
-                getActivity(),
-                //android.R.layout.simple_list_item_activated_1,
-                R.layout.fragment_item_list,
-                android.R.id.text1,
-                MarketContent.ITEMS
-        ));*/
     }
 
     @Override
     public void onLoaderReset(Loader<List<MarketContent.MarketItem>> listLoader) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Init the list adapter and set it
         marketListAdapter = new MarketListAdapter(getActivity(), MarketContent.ITEMS);
         setListAdapter(marketListAdapter);
-
-        /*setListAdapter(new ArrayAdapter<MarketContent.MarketItem>(
-                getActivity(),
-                //android.R.layout.simple_list_item_activated_1,
-                R.layout.fragment_item_list,
-                android.R.id.text1,
-                MarketContent.ITEMS
-        ));*/
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        setHasOptionsMenu(true);
+
+        // Start the async load
         getLoaderManager().initLoader(0, null, this).forceLoad();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.grid_default_search, menu);
     }
 
     @Override
@@ -204,7 +205,7 @@ public class ItemListFragment extends ListFragment
     }
 
     /**
-     * Async Loader to fetch data from Api
+     * Async Loader to fetch data from api
      */
     public static class JSONLoader extends AsyncTaskLoader<List<MarketContent.MarketItem>> {
         public JSONLoader(Context context){

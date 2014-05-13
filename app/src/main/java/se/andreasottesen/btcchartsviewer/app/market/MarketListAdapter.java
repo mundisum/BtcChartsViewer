@@ -67,11 +67,17 @@ public class MarketListAdapter extends BaseAdapter {
 
         MarketContent.MarketItem marketItem = (MarketContent.MarketItem) getItem(position);
 
-        TextView textView = (TextView)view.findViewById(android.R.id.text1);
+        TextView textView = (TextView)view.findViewById(R.id.txtSymbol);
         textView.setText(marketItem.symbol);
 
-        textView = (TextView) view.findViewById(android.R.id.text2);
+        textView = (TextView) view.findViewById(R.id.txtCurrency);
         textView.setText(marketItem.currency);
+
+        textView = (TextView)view.findViewById(R.id.txtAsk);
+        textView.setText(Float.toString(marketItem.ask));
+
+        textView = (TextView)view.findViewById(R.id.txtBid);
+        textView.setText(Float.toString(marketItem.bid));
 
         /*
         holder = new MarketViewHolder();
