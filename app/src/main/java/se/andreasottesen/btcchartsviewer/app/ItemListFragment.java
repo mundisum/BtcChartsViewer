@@ -30,6 +30,9 @@ import se.andreasottesen.btcchartsviewer.app.market.MarketContent;
 public class ItemListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<List<MarketContent.MarketItem>> {
 
+    /**
+     * Url to the bitcoincharts api
+     */
     public static String API_URL = "http://api.bitcoincharts.com";
 
     /**
@@ -89,7 +92,8 @@ public class ItemListFragment extends ListFragment
 
         setListAdapter(new ArrayAdapter<MarketContent.MarketItem>(
                 getActivity(),
-                android.R.layout.simple_list_item_activated_1,
+                //android.R.layout.simple_list_item_activated_1,
+                R.layout.fragment_item_list,
                 android.R.id.text1,
                 MarketContent.ITEMS
         ));
@@ -106,7 +110,8 @@ public class ItemListFragment extends ListFragment
 
         setListAdapter(new ArrayAdapter<MarketContent.MarketItem>(
                 getActivity(),
-                android.R.layout.simple_list_item_activated_1,
+                //android.R.layout.simple_list_item_activated_1,
+                R.layout.fragment_item_list,
                 android.R.id.text1,
                 MarketContent.ITEMS
         ));
@@ -190,6 +195,9 @@ public class ItemListFragment extends ListFragment
         mActivatedPosition = position;
     }
 
+    /**
+     * Async Loader to fetch data from Api
+     */
     public static class JSONLoader extends AsyncTaskLoader<List<MarketContent.MarketItem>> {
         public JSONLoader(Context context){
             super(context);

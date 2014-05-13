@@ -24,24 +24,6 @@ public class MarketContent {
         }
     }
 
-    /* For testing
-    static{
-        MarketItem item = new MarketItem();
-        item.symbol = "marketSEK";
-        item.currency = "SEK";
-        item.ask = 2000;
-
-        addItem(item);
-
-        item = new MarketItem();
-        item.symbol = "marketNOK";
-        item.currency = "NOK";
-        item.ask = 1800;
-
-        addItem(item);
-    }
-    */
-
     public static class MarketItem{
         public String symbol;
         public String currency;
