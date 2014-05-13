@@ -17,6 +17,7 @@ import java.util.List;
 import retrofit.RestAdapter;
 import se.andreasottesen.btcchartsviewer.app.market.IMarketService;
 import se.andreasottesen.btcchartsviewer.app.market.MarketContent;
+import se.andreasottesen.btcchartsviewer.app.market.MarketListAdapter;
 
 /**
  * A list fragment representing a list of Items. This fragment
@@ -51,6 +52,8 @@ public class ItemListFragment extends ListFragment
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+    private MarketListAdapter marketListAdapter;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -90,13 +93,15 @@ public class ItemListFragment extends ListFragment
     public void onLoadFinished(Loader<List<MarketContent.MarketItem>> listLoader, List<MarketContent.MarketItem> marketItems) {
         MarketContent.addItems(marketItems);
 
+        setListAdapter(marketListAdapter);
+        /*
         setListAdapter(new ArrayAdapter<MarketContent.MarketItem>(
                 getActivity(),
                 //android.R.layout.simple_list_item_activated_1,
                 R.layout.fragment_item_list,
                 android.R.id.text1,
                 MarketContent.ITEMS
-        ));
+        ));*/
     }
 
     @Override
@@ -108,13 +113,16 @@ public class ItemListFragment extends ListFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setListAdapter(new ArrayAdapter<MarketContent.MarketItem>(
+        marketListAdapter = new MarketListAdapter(getActivity(), MarketContent.ITEMS);
+        setListAdapter(marketListAdapter);
+
+        /*setListAdapter(new ArrayAdapter<MarketContent.MarketItem>(
                 getActivity(),
                 //android.R.layout.simple_list_item_activated_1,
                 R.layout.fragment_item_list,
                 android.R.id.text1,
                 MarketContent.ITEMS
-        ));
+        ));*/
     }
 
     @Override
@@ -208,10 +216,10 @@ public class ItemListFragment extends ListFragment
             RestAdapter restAdapter = new RestAdapter.Builder()
                     .setEndpoint(API_URL)
                     .build();
-            IMarketService service = restAdapter.create(IMarketService.class);
-            List<MarketContent.MarketItem> marketItems = service.marketItems();
 
-            return marketItems;
+            IMarketService service = restAdapter.create(IMarketService.class);
+
+            return service.marketItems();
         }
     }
 }
