@@ -1,17 +1,21 @@
 package se.andreasottesen.btcchartsviewer.app;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -64,6 +68,8 @@ public class ItemListFragment extends ListFragment
      */
     private MarketListAdapter marketListAdapter;
 
+    private EditText searchText;
+
     /**
      * A callback interface that all activities containing this fragment must
      * implement. This mechanism allows activities to be notified of item
@@ -103,6 +109,21 @@ public class ItemListFragment extends ListFragment
         MarketContent.addItems(marketItems);
 
         setListAdapter(marketListAdapter);
+
+        searchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                marketListAdapter.getFilter().filter(s);
+            }
+        });
     }
 
     @Override
@@ -130,7 +151,17 @@ public class ItemListFragment extends ListFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.grid_default_search, menu);
+        inflater.inflate(R.menu.options_menu, menu);
+
+        // Get the search box
+        searchText =(EditText) menu.findItem(R.id.search).getActionView();
+
+        // Associate with searchable configuration
+        /*
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        */
     }
 
     @Override
