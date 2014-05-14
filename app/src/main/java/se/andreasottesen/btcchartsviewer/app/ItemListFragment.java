@@ -68,6 +68,9 @@ public class ItemListFragment extends ListFragment
      */
     private MarketListAdapter marketListAdapter;
 
+    /**
+     * The edittext used to filter the list
+     */
     private EditText searchText;
 
     /**
@@ -113,10 +116,12 @@ public class ItemListFragment extends ListFragment
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No action
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+                // No action
             }
 
             @Override
@@ -153,15 +158,8 @@ public class ItemListFragment extends ListFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.options_menu, menu);
 
-        // Get the search box
+        // Get the search box reference when created
         searchText =(EditText) menu.findItem(R.id.search).getActionView();
-
-        // Associate with searchable configuration
-        /*
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        */
     }
 
     @Override
