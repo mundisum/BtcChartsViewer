@@ -5,4 +5,9 @@
     <string name="title_item_detail">Item Detail</string>
     <string name="search_hint">Search...</string>
     <string name="search_title">Search</string>
+    <string name="refresh">Refresh</string>
+    <string name="high">High: %1$f</string>
+    <string name="low">Low: %1$f</string>
+    <string name="ask">Ask: %1$f</string>
+    <string name="bid">Bid: %1$f</string>
 </resources>

@@ -20,14 +20,14 @@ import se.andreasottesen.btcchartsviewer.app.R;
  */
 public class MarketListAdapter extends ArrayAdapter<MarketContent.MarketItem> {
     private List<MarketContent.MarketItem> markets;
-    private List<MarketContent.MarketItem> filteredMarkets;
+    private List<MarketContent.MarketItem> orgMarkets;
     private Context context;
     private MarketListFilter filter;
 
     public MarketListAdapter(Context context, List<MarketContent.MarketItem> markets) {
         super(context, R.layout.fragment_item_list);
         this.markets = markets;
-        this.filteredMarkets = markets;
+        this.orgMarkets = new ArrayList<MarketContent.MarketItem>(markets);
         this.context = context;
     }
 
@@ -64,6 +64,10 @@ public class MarketListAdapter extends ArrayAdapter<MarketContent.MarketItem> {
         return filter;
     }
 
+    public void resetData(){
+        markets = orgMarkets;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
@@ -75,7 +79,7 @@ public class MarketListAdapter extends ArrayAdapter<MarketContent.MarketItem> {
         }
 
         // Get market item from filtered items
-        MarketContent.MarketItem marketItem = filteredMarkets.get(position);
+        MarketContent.MarketItem marketItem = markets.get(position);
 
         TextView textView = (TextView)view.findViewById(R.id.txtSymbol);
         textView.setText(marketItem.symbol);
@@ -84,10 +88,10 @@ public class MarketListAdapter extends ArrayAdapter<MarketContent.MarketItem> {
         textView.setText(marketItem.currency);
 
         textView = (TextView)view.findViewById(R.id.txtAsk);
-        textView.setText(Float.toString(marketItem.ask));
+        textView.setText(String.format(context.getResources().getString(R.string.ask), marketItem.ask));
 
         textView = (TextView)view.findViewById(R.id.txtBid);
-        textView.setText(Float.toString(marketItem.bid));
+        textView.setText(String.format(context.getResources().getString(R.string.bid), marketItem.bid));
 
         /*
         holder = new MarketViewHolder();
@@ -108,45 +112,43 @@ public class MarketListAdapter extends ArrayAdapter<MarketContent.MarketItem> {
 
     public class MarketListFilter extends Filter{
         @Override
-        protected FilterResults performFiltering(CharSequence contraint) {
+        protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults retVal = new FilterResults();
-            retVal.values = markets;
-            retVal.count = markets.size();
 
-            if (contraint != null && contraint.toString().length() > 0){
-                String constraintString = contraint.toString().toUpperCase();
-                ArrayList filt = new ArrayList();
-                ArrayList tempItems = new ArrayList();
-                tempItems.addAll(markets);
-
-                for (int i=0;i<tempItems.size();i++){
-                    MarketContent.MarketItem item =(MarketContent.MarketItem) tempItems.get(i);
-                    if (item.symbol.toUpperCase().contains(constraintString)){
-                        filt.add(item);
-                    }
-                }
-                retVal.count = filt.size();
-                retVal.values = filt;
+            if (constraint == null || constraint.length() <= 0){
+                // No filter value
+                retVal.values = markets;
+                retVal.count = markets.size();
             }
+            else{
+                // Perform filtering
+                String constraintString = constraint.toString().toUpperCase();
+                List<MarketContent.MarketItem> items = new ArrayList<MarketContent.MarketItem>();
 
+                for (MarketContent.MarketItem market : markets){
+                    if (market.symbol.toUpperCase().contains(constraintString))
+                        items.add(market);
+                }
+
+                retVal.values = items;
+                retVal.count = items.size();
+            }
             return retVal;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredMarkets = (List< MarketContent.MarketItem>)results.values;
-            notifyDataSetChanged();
+            Log.d("Filter", "Starting publish results " + results.count + " items");
 
-            markets.clear();
-
-            Log.d("Filter", "Starting publish results");
-
-            for (int i=0;i<filteredMarkets.size();i++){
-                markets.add(filteredMarkets.get(i));
+            if (results.count == 0){
+                notifyDataSetInvalidated();
+            }
+            else{
+                markets = (List<MarketContent.MarketItem>) results.values;
+                notifyDataSetChanged();
             }
 
             Log.d("Filter", "Finished publish results");
-            notifyDataSetInvalidated();
         }
     }
 }

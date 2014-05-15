@@ -11,10 +11,12 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -69,7 +71,7 @@ public class ItemListFragment extends ListFragment
     private MarketListAdapter marketListAdapter;
 
     /**
-     * The edittext used to filter the list
+     * References to menu controls
      */
     private EditText searchText;
 
@@ -126,7 +128,13 @@ public class ItemListFragment extends ListFragment
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                marketListAdapter.getFilter().filter(s);
+                Log.d("ListSearch", "Filter text changed");
+
+                if (count < before){
+                    marketListAdapter.resetData();
+                }
+
+                marketListAdapter.getFilter().filter(s.toString());
             }
         });
     }
@@ -158,8 +166,8 @@ public class ItemListFragment extends ListFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.options_menu, menu);
 
-        // Get the search box reference when created
-        searchText =(EditText) menu.findItem(R.id.search).getActionView();
+        // Get the menu controls
+        searchText = (EditText) menu.findItem(R.id.search).getActionView();
     }
 
     @Override
